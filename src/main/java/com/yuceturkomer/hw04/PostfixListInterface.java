@@ -5,5 +5,5 @@ package com.yuceturkomer.hw04;
  */
 public interface PostfixListInterface {
     boolean infixToPostfixFromFile(String inFileName);
-    String infixStringToPostfix(String strToConvert) throws NotIdentifierException;
+    String infixStringToPostfix(String strToConvert) throws NotIdentifierException, PostfixList.SyntaxErrorException;
 }
