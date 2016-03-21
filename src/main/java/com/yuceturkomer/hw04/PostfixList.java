@@ -1,3 +1,5 @@
+package com.yuceturkomer.hw04;
+
 import java.io.*;
 import java.util.EmptyStackException;
 import java.util.LinkedList;
@@ -35,6 +37,11 @@ public class PostfixList extends LinkedList<String> implements PostfixListInterf
             throw new AssignmentException("Assignment operator not found or is at wrong place");
         }
 
+    }
+    //Testing
+    public void printAll(){
+        varQueue.toString();
+        operatorStack.toString();
     }
 
     private int getPrecedence(Character op) {

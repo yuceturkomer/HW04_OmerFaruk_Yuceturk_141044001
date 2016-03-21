@@ -1,3 +1,5 @@
+package com.yuceturkomer.hw04;
+
 /**
  * Created by ömer on 20.3.2016.
  */
