@@ -11,37 +11,33 @@ import java.util.Stack;
 public class PostfixList extends LinkedList<String> implements PostfixListInterface {
     private static final String OPERATORS = "=-+*/";
     private static final Integer[] PRECEDENCE = {1, 2, 2, 3, 3};
-    private LinkedList<String> varQueue = new LinkedList<String>();
     private Stack<Character> operatorStack = new Stack<Character>();
 
-    private void evalOperator(Character operator) throws AssignmentException {
+    private String evalOperator(Character operator, String toPostfix) throws AssignmentException {
         Character c;
         try {
             while (true) {
                 c = operatorStack.peek();
-                if (getPrecedence(c) < getPrecedence(operator))
+                if (getPrecedence(c) < getPrecedence(operator)) {
                     operatorStack.push(operator);
-                else {
-                    while (getPrecedence(operatorStack.peek()) >= getPrecedence(operator)) {
-                        offer(String.valueOf(operatorStack.pop()));
-                    }
-                    operatorStack.push(operator);
+                    break;
+                } else {
+                    toPostfix = toPostfix + operatorStack.pop().toString() + " ";
                 }
             }
         } catch (EmptyStackException e) {
             operatorStack.push(operator);
         }
-        if (operatorStack.peek() == '=') {
-            offer(String.valueOf(operatorStack.pop()));
-        } else {
-            throw new AssignmentException("Assignment operator not found or is at wrong place");
+        if (operatorStack.peek() == '=' && size() > 1) {
+            toPostfix = toPostfix + operatorStack.pop().toString() + " ";
         }
-
+        return toPostfix;
     }
+
     //Testing
-    public void printAll(){
-        varQueue.toString();
-        operatorStack.toString();
+    public void printAll() {
+        System.out.println(operatorStack.toString());
+        System.out.println(toString());
     }
 
     private int getPrecedence(Character op) {
@@ -49,34 +45,36 @@ public class PostfixList extends LinkedList<String> implements PostfixListInterf
     }
 
     public String infixStringToPostfix(String strToConvert) throws NotIdentifierException {
+        String toReturn = "";
         String[] split = strToConvert.split("\\s+");
         for (String aSplit : split) {
-            if (aSplit.length() > 1 && aSplit.charAt(0) >= '0' && aSplit.charAt(0) <= '9')
-                throw new NotIdentifierException("Not an identifier");
             Character c = aSplit.charAt(0);
             try {
                 switch (c) {
                     case '*':
                     case '/':
-                        evalOperator(c);
-                        break;
                     case '+':
                     case '-':
-                        evalOperator(c);
-                        break;
                     case '=':
-                        evalOperator(c);
+                        toReturn = evalOperator(c, toReturn);
                         break;
                     default:
-                        varQueue.offer(aSplit);
+                        toReturn += aSplit + " ";
                         break;
                 }
             } catch (AssignmentException e) {
-                e.getMessage();
+                e.printStackTrace();
             }
         }
+        while (!operatorStack.empty()) {
+            Character c = operatorStack.pop();
+            if (c != '=')
+                toReturn += c.toString() + " ";
+            else
+                toReturn += c.toString();
+        }
 
-        return null;
+        return toReturn;
     }
 
 
