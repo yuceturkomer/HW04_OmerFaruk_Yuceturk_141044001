@@ -7,7 +7,10 @@ import java.util.EmptyStackException;
 import java.util.regex.Pattern;
 import java.util.Scanner;
 /**
- * Created by ömer on 20.3.2016.
+ * Created by yuceturkomer on 20.3.2016.
+ *
+ *
+ *
  */
 public class PostfixList extends LinkedList<String> implements PostfixListInterface {
 
@@ -55,50 +58,6 @@ public class PostfixList extends LinkedList<String> implements PostfixListInterf
      * The postfix string
      */
     private StringBuilder postfix;
-
-    /**
-     * Convert a string from infix to postfix.
-     *
-     * @param infix The infix expression
-     * @throws SyntaxErrorException
-     */
-    public String infixStringToPostfix(String infix) throws SyntaxErrorException,NotIdentifierException {
-        operatorStack = new Stack<Character>();
-        postfix = new StringBuilder();
-        Scanner s = new Scanner(infix);
-        try {
-            // Process each token in the infix string.
-            String nextToken = null;
-            while ((nextToken = s.findInLine(tokens)) != null) {
-                char firstChar = nextToken.charAt(0);
-                // Is it an operand?
-                if (Character.isJavaIdentifierStart(firstChar)
-                        || Character.isDigit(firstChar)) {
-                    postfix.append(nextToken);
-                    postfix.append(' ');
-                } // Is it an operator?
-                else if (isOperator(firstChar)) {
-                    processOperator(firstChar);
-                } else {
-                    throw new SyntaxErrorException
-                            ("Unexpected Character Encountered: " + firstChar);
-                }
-            } // End while.
-
-            // Pop any remaining operators and
-            // append them to postfix.
-            while (!operatorStack.empty()) {
-                char op = operatorStack.pop();
-                postfix.append(op);
-                postfix.append(' ');
-            }
-            // assert: Stack is empty, return result.
-            return postfix.toString();
-        } catch (EmptyStackException ex) {
-            throw new SyntaxErrorException("Syntax Error: The stack is empty");
-        }
-    }
-
     /**
      * Method to process operators.
      *
@@ -155,8 +114,64 @@ public class PostfixList extends LinkedList<String> implements PostfixListInterf
         return PRECEDENCE[OPERATORS.indexOf(op)];
     }
 
+    public PostfixList() {
+        super();
+    }
+    public PostfixList(String inFileName){
+        infixToPostfixFromFile(inFileName);
+    }
+
+    /**
+     * Convert a string from infix to postfix.
+     *
+     * @param infix The infix expression
+     * @throws SyntaxErrorException
+     */
 
 
+    public String infixStringToPostfix(String infix) throws SyntaxErrorException,NotIdentifierException {
+        operatorStack = new Stack<Character>();
+        postfix = new StringBuilder();
+        Scanner s = new Scanner(infix);
+        try {
+            // Process each token in the infix string.
+            String nextToken = null;
+            while ((nextToken = s.findInLine(tokens)) != null) {
+                char firstChar = nextToken.charAt(0);
+                // Is it an operand?
+                if (Character.isJavaIdentifierStart(firstChar)
+                        || Character.isDigit(firstChar)) {
+                    postfix.append(nextToken);
+                    postfix.append(' ');
+                } // Is it an operator?
+                else if (isOperator(firstChar)) {
+                    processOperator(firstChar);
+                } else {
+                    throw new SyntaxErrorException
+                            ("Unexpected Character Encountered: " + firstChar);
+                }
+            } // End while.
+
+            // Pop any remaining operators and
+            // append them to postfix.
+            while (!operatorStack.empty()) {
+                char op = operatorStack.pop();
+                postfix.append(op);
+                postfix.append(' ');
+            }
+            // assert: Stack is empty, return result.
+            return postfix.toString();
+        } catch (EmptyStackException ex) {
+            throw new SyntaxErrorException("Syntax Error: The stack is empty");
+        }
+    }
+
+
+
+    /**
+     *
+     *
+     * */
     public boolean infixToPostfixFromFile(String inFileName) {
 
         try {
