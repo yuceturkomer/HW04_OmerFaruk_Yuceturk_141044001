@@ -9,8 +9,6 @@ import java.util.Scanner;
 /**
  * Created by yuceturkomer on 20.3.2016.
  *
- *
- *
  */
 public class PostfixList extends LinkedList<String> implements PostfixListInterface {
 
@@ -167,11 +165,13 @@ public class PostfixList extends LinkedList<String> implements PostfixListInterf
     }
 
 
-
     /**
+     * Reads lines from file and then evaluates the postfix
+     * form of every line. Then it fills the PostfixList.
      *
-     *
-     * */
+     * @param inFileName The input file name string.
+     * @return Returns true if successful.
+     */
     public boolean infixToPostfixFromFile(String inFileName) {
 
         try {

@@ -1,19 +1,30 @@
 package com.yuceturkomer.hw04;
 
 /**
- * Created by ömer on 21.3.2016.
+ * Main function for tests
+ *
+ *
  */
 public class InfixToPostfixMain {
     public static void main(String[] args) {
+
+        String inFile;
+        if(args.length==2){
+            inFile=args[1];
+        }
+        else
+            inFile="input.txt";
+
+
         System.out.println("#################### INPUT FILE ############################");
         PostfixList test1 = new PostfixList();
-        test1.infixToPostfixFromFile("input.txt");
+        test1.infixToPostfixFromFile(inFile);
         System.out.println("#################### POSTFIX FORM ### test1 #################");
         for(String s: test1){
             System.out.println(s);
         }
         System.out.println("#################### INPUT FILE ############################");
-        PostfixList test2 = new PostfixList("input.txt");
+        PostfixList test2 = new PostfixList(inFile);
         System.out.println("#################### POSTFIX FORM ### test 2 ################");
         for(String s: test2){
             System.out.println(s);

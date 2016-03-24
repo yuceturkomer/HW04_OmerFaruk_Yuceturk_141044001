@@ -1,16 +1,19 @@
 package com.yuceturkomer.hw04;
 
 
+import java.io.*;
 import java.util.Arrays;
 import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.Stack;
 
 /**
- *
+ * PostfixToAsm class
  */
-public class PostfixToAsm implements PostfixToAsmInterface {
-
+public class PostfixToAsm {
+    /**
+     * Nested exception class
+     */
     public static class SyntaxErrorException extends Exception {
         SyntaxErrorException(String message) {
             super(message);
@@ -20,9 +23,21 @@ public class PostfixToAsm implements PostfixToAsmInterface {
 
     private static final String OPERATORS = "+-*/=";
     private Stack<Operand> operandStack;
+    /**
+     * Represents the registers
+     */
     private Register[] regArr = new Register[8];
     private LinkedList<String> toWriteList = new LinkedList<String>();
 
+    /**
+     * Evaluates operator, returns index of operations results kept.
+     *
+     * @param op     character operand
+     * @param result result of operation
+     * @return index of register result hold
+     * @throws UninitializedVariableException if there is uninitialized variable
+     * @throws AssignmentException            false assignment
+     */
     private int evalOp(char op, Integer result) throws UninitializedVariableException, AssignmentException {
         Operand rhs = operandStack.pop();
         Operand lhs = operandStack.pop();
@@ -189,14 +204,18 @@ public class PostfixToAsm implements PostfixToAsmInterface {
                     if (indexOf(rhs) >= 0 && regArr[indexOf(rhs)].isChangable())
                         clearIndexReg(tempIndex1);
                     for (Register o : regArr) {
-                        if (o.isChangable())
-                            o = null;
+                        if (o != null && o.isChangable())
+                            o.setRegIndex(-1);
                     }
                     break;
+                default:
+                    writeToFile();
             }
         } catch (RegisterIsFullException e) {
             System.err.println("The register is full. Program will exit.");
             System.exit(1);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return returnIndex;
     }
@@ -205,19 +224,33 @@ public class PostfixToAsm implements PostfixToAsmInterface {
         return OPERATORS.indexOf(ch) != -1;
     }
 
+    /**
+     * Takes the postfixlist and converts to Assembly file *.asm
+     *
+     * @param postfixList
+     */
     public PostfixToAsm(PostfixList postfixList) {
         for (Register op : regArr) {
-            op=new Register(new Operand(""),-1);
+            op = new Register(new Operand(""), -1);
             op.setChangable(true);
         }
         try {
-            eval(postfixList.poll());
+            while (postfixList.size() != 0) {
+                eval(postfixList.poll());
+            }
+            System.err.println("=========================");
         } catch (SyntaxErrorException e) {
             System.err.println("Syntax exception.: ");
             e.printStackTrace();
         }
     }
 
+    /**
+     * Operand to be inserted to the register array
+     *
+     * @param op
+     * @throws RegisterIsFullException
+     */
     public void insertArr(Operand op) throws RegisterIsFullException {
         if (giveIndexReg() != -1)
             regArr[giveIndexReg()] = new Register(op.getCopy(), giveIndexReg());
@@ -240,16 +273,25 @@ public class PostfixToAsm implements PostfixToAsmInterface {
 
     public int indexOf(Operand op) {
         int returnval = -1;
+        if (op == null)
+            return returnval;
         for (int i = 0; i < regArr.length; ++i) {
-            if (regArr[i].equals(op)) {
+            if (regArr[i] != null && regArr[i].equals(op)) {
                 returnval = i;
             }
         }
         return returnval;
     }
 
+    /**
+     * Evaluates the postfix string and creates assembly codes for each operation done
+     *
+     * @param expression postfix string to be converted
+     * @return returns result of the operations
+     * @throws SyntaxErrorException syntax error
+     */
     public int eval(String expression) throws SyntaxErrorException {
-        Integer returnVal=null;
+        Integer returnVal = null;
         operandStack = new Stack<Operand>();
         if (expression.contains("print")) {
             String[] tokens = expression.split("\\s+");
@@ -259,6 +301,11 @@ public class PostfixToAsm implements PostfixToAsmInterface {
                     toWriteList.offer("move   $a0,t" + indexOf(tempOp));
                     toWriteList.offer("li   $v0,1" + indexOf(tempOp));
                     toWriteList.offer("syscall");
+                    try {
+                        writeToFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     return 1;
                 }
             }
@@ -280,12 +327,14 @@ public class PostfixToAsm implements PostfixToAsmInterface {
                         case '/':
                             Integer result = 0;
                             int regIndex = evalOp(firstChar, result);
+                            writeToFile();
                             regArr[regIndex] = new Register(new Operand(String.valueOf(result)), regIndex);
                             operandStack.push(new Operand(String.valueOf(result)));
                             break;
                         case '=':
                             result = 0;
                             regIndex = evalOp(firstChar, result);
+                            writeToFile();
                             regArr[regIndex] = new Register(new Operand(String.valueOf(result)), regIndex);
                             operandStack.push(new Operand(String.valueOf(result)));
                             returnVal = result;
@@ -313,10 +362,24 @@ public class PostfixToAsm implements PostfixToAsmInterface {
             e.printStackTrace();
         } catch (AssignmentException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        if(returnVal==null)
+        if (returnVal == null)
             throw new NullPointerException();
         return returnVal;
+    }
+
+    public void writeToFile() throws IOException {
+        File fout = new File("output.asm");
+        FileOutputStream fos = new FileOutputStream(fout);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+        if (!toWriteList.isEmpty()) {
+            bw.append(toWriteList.poll());
+            bw.newLine();
+        }
+
+        bw.close();
     }
 
     @Override

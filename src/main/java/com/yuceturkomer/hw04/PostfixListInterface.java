@@ -1,6 +1,7 @@
 package com.yuceturkomer.hw04;
 
 /**
+ * PostfixListInterface
  * Created by ömer on 20.3.2016.
  */
 public interface PostfixListInterface {
