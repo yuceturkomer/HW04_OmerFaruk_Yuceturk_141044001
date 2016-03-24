@@ -8,14 +8,14 @@ public class Operand {
 
     public Operand(String operand) {
         setOperand(operand);
+
     }
     public boolean isIntOp(){
-        return (operand.charAt(0) >= '0') && (operand.charAt(0) <= '9');
+        return (operand.length()>0 && operand.charAt(0) >= '0') && (operand.charAt(0) <= '9');
     }
     public boolean isVariable(){
-        return (!isIntOp() && Character.isJavaIdentifierStart(operand.charAt(0)));
+        return (operand.length()>0 && !isIntOp() && Character.isJavaIdentifierStart(operand.charAt(0)));
     }
-
     public String getOperand() {
         return operand;
     }
@@ -23,9 +23,9 @@ public class Operand {
     public void setOperand(String operand) {
         this.operand = operand;
     }
-
-
-
+    public Operand getCopy(){
+        return new Operand(getOperand());
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -36,7 +36,6 @@ public class Operand {
         return getOperand().equals(operand1.getOperand());
 
     }
-
     @Override
     public String toString() {
         return operand;

@@ -19,8 +19,8 @@ public class InfixToPostfixMain {
             System.out.println(s);
         }
         System.out.println("####################   CRITIC TEST :(  ###################");
-        PostfixToAsm asmlel = new PostfixToAsm(test2);
-        System.out.println(asmlel.toString());
+        PostfixToAsm trekt = new PostfixToAsm(test2);
+        System.out.println(trekt.toString());
 
 
 
