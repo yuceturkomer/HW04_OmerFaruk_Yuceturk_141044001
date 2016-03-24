@@ -1,7 +1,7 @@
 package com.yuceturkomer.hw04;
 
 /**
- * Created by ömer on 22.3.2016.
+ * Created by Omer Faruk Yuceturk on 22.3.2016.
  * Operand Class
  */
 public class Operand {

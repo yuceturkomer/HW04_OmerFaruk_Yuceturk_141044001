@@ -7,7 +7,7 @@ import java.util.EmptyStackException;
 import java.util.regex.Pattern;
 import java.util.Scanner;
 /**
- * Created by yuceturkomer on 20.3.2016.
+ * Created by Omer Faruk Yuceturk on 20.3.2016.
  *
  */
 public class PostfixList extends LinkedList<String> implements PostfixListInterface {

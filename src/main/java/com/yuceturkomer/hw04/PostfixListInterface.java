@@ -2,7 +2,7 @@ package com.yuceturkomer.hw04;
 
 /**
  * PostfixListInterface
- * Created by ömer on 20.3.2016.
+ * Created by Omer Faruk Yuceturk on 20.3.2016.
  */
 public interface PostfixListInterface {
     boolean infixToPostfixFromFile(String inFileName);
